@@ -1,0 +1,11 @@
+.DS_Store
+.classpath
+.project
+.settings
+*.bak
+.*.swp
+build.log
+bin
+target
+.idea/
+*.iml

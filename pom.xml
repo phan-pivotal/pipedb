@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>info.pipedb</groupId>
+    <artifactId>pipedb</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1</version>
+
+    <name>PipeDB</name>
+    <description>
+      PipeDB NOSQL database block repository
+    </description>
+
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+
+    <properties>
+        <projectName>pipedb</projectName>
+
+        <!-- Default temporary file directory -->
+        <tmpdir>/tmp</tmpdir>
+
+        <!-- Version of dependencies -->
+        <GgleTestVersion>1.6.0</GgleTestVersion>
+        <snappyVersion>1.1.2-r83</snappyVersion>
+	<leveldbVersion>1.16.0-oodrive</leveldbVersion>
+	<localAOL>x86_64-MacOSX-gpp</localAOL>
+    </properties>
+
+    <modules>
+        <module>tools</module>
+        <module>thirdparty</module>
+        <module>core</module>
+    </modules>
+</project>

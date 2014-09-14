@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.pipedb</groupId>
+        <artifactId>pipedb</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>core</artifactId>
+    <packaging>nar</packaging>
+
+    <name>Pipe DB core</name>
+
+    <properties>
+        <skipTests>true</skipTests>
+    </properties>
+
+    <build>
+        <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>shell-maven-plugin</artifactId>
+	<version>1.0-beta-1</version>
+        <configuration>
+          <chmod>true</chmod>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate_autogen</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>shell</goal>
+            </goals>
+            <configuration>
+	      <keepScriptFile>true</keepScriptFile>
+              <script>
+#!/bin/sh
+mkdir -p ${basedir}/target/nar/gnu/${localAOL}/src
+touch ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
+echo '#!/bin/sh' >> ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
+echo "cmake -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target -G 'Unix Makefiles'" > ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+            <plugin>
+              <groupId>com.github.maven-nar</groupId>
+              <artifactId>nar-maven-plugin</artifactId>
+              <version>3.1.0</version>
+              <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>${leveldbVersion}</version>
+            <type>nar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>gtest</artifactId>
+            <version>${GgleTestVersion}</version>
+            <type>nar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
