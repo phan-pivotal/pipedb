@@ -1,21 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>info.pipedb</groupId>
-        <artifactId>pipedb</artifactId>
+        <artifactId>tools</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>tools</artifactId>
+    <artifactId>get-localAOL</artifactId>
     <packaging>pom</packaging>
 
-    <name>Tools projects</name>
-
     <modules>
-        <module>nar-maven-plugin</module>
-        <module>get-localAOL</module>
-        <module>compile-src</module>
+        <module>c-nar-project</module>
+        <module>shell-script</module>
     </modules>
 </project>

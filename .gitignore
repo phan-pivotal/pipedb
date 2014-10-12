@@ -1,3 +1,4 @@
 .cproject
 .project
 **/target
+src/pom.xml

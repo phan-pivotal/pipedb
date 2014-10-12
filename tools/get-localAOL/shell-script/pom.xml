@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>info.pipedb</groupId>
+        <artifactId>get-localAOL</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>shell-script</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Get localAOL - shell script</name>
+
+    <build>
+      <plugins>
+	<plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>shell-maven-plugin</artifactId>
+	  <version>1.0-beta-1</version>
+          <configuration>
+            <chmod>true</chmod>
+          </configuration>
+          <executions>
+            <execution>
+              <id>generate_pom</id>
+              <phase>initialize</phase>
+              <goals>
+		<goal>shell</goal>
+              </goals>
+              <configuration>
+		<keepScriptFile>false</keepScriptFile>
+		<script>
+		  #!/bin/sh
+		  exec ${basedir}/src/get-localAOL.sh ${basedir}/../../../src/pom.xml
+		</script>
+              </configuration>
+            </execution>
+          </executions>
+	</plugin>
+      </plugins>
+    </build>
+</project>

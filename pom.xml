@@ -9,7 +9,7 @@
 
     <name>PipeDB</name>
     <description>
-      PipeDB NOSQL database block repository
+      PipeDB NOSQL database block repository - Parent pom
     </description>
 
     <prerequisites>
@@ -26,12 +26,10 @@
         <GgleTestVersion>1.6.0</GgleTestVersion>
         <snappyVersion>1.1.2-r83</snappyVersion>
 	<leveldbVersion>1.16.0-oodrive</leveldbVersion>
-	<localAOL>x86_64-MacOSX-gpp</localAOL>
     </properties>
 
     <modules>
         <module>tools</module>
-        <module>thirdparty</module>
-        <module>core</module>
+	<!-- src has no pom.xml tools will generate it ... -->
     </modules>
 </project>

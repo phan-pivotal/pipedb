@@ -35,9 +35,6 @@ namespace pipedb
 class BlockRepository: private boost::noncopyable
 {
 public:
-  virtual ~BlockRepository()
-  {
-  }
 
   /**
    * @brief Open the block repository.
@@ -52,12 +49,19 @@ public:
   /**
    * @brief Close the block repository.
    */
-  virtual void close() = 0;
+  virtual Return close() = 0;
 
   /**
    * @brief Check if the block repository is closed.
    */
   virtual bool closed() = 0;
+
+  /**
+   * @brief Erase all data on disk of this block repository
+   *
+   * Shall be closed.
+   */
+  virtual Return erase() = 0;
 
   /**
    * @brief Put a value in the block repository.
@@ -86,6 +90,7 @@ public:
 
 protected:
   BlockRepository() = default;
+  virtual ~BlockRepository() {}
 };
 
 }
