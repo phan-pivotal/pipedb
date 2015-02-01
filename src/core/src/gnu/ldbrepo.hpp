@@ -50,7 +50,6 @@ class LdbRepo: public BlockRepository {
             cache.reset(leveldb::NewLRUCache(64 << 20));
             assert(NULL != cache.get());
             options.block_cache = cache.get();
-            this->setCacheSize(cacheSize);
             // Use a bloom filters to reduce the disk lookups.
             filter.reset(leveldb::NewBloomFilterPolicy(100));
             assert(NULL != filter.get());
