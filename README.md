@@ -19,7 +19,8 @@ To build just do :
 mvn clean install
 ```
 
-On first build this will generate src/pom.xml with localAOL variable depending on your system/machine. After first build tools can be avoided and you can only work with in src directory like any maven project. 
+On first build this will generate "src/pom.xml" with "localAOL" variable depending on your system/machine. 
+After first build "tools" directory can be avoided and you can only work within "src" directory like any maven project. 
 
 License
 ----
