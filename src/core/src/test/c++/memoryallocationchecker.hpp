@@ -1,8 +1,10 @@
 /*
  * #%L
- * Project eguan
+ * Originally from project eguan
+ * Memory Tools for unit/regression testings/header
  * %%
- * Copyright (C) 2012 - 2014 Oodrive
+ * Copyright (C) 2012 - 2014 Oodrive eguan.io for Nu@ge project
+ * Copyrignt (C) 2015 Jean-Manuel CABA
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +19,14 @@
  * limitations under the License.
  * #L%
  */
-/**
- * @file testsMemoryTools.h
- * @brief Memory Tools for unit/regression testings/header
- * @author jcaba
- */
 #pragma once
 
 #include <new>
 #include <cstddef>
 #include <cstdint>
+#include <stdlib.h>
+#include <strings.h>
+#include <iostream>
 
 // very basic memory leak checker
 // to detect regression in memory management
@@ -35,12 +35,23 @@
 // allocated memory is a little bigger to add markers
 // at begin and end of allocated blocks
 // and saving size at the beginning of the blocks
+namespace pipedb_testing {
 
-extern void resetAllocationCounter(); // reset the counter of new/delete
-extern int_fast64_t getAllocationCount(); // count number of new/delete
+class MemoryChecker {
+private:
+  static int_fast64_t allocation;
+  static size_t allocatedBytes;
+public:
+  static void* innerNew(size_t size);
+  static void innerDelete(void* p) throw ();
 
-extern size_t getAllocatedBytes(); // get the number of bytes dynamically allocated
+  static void resetAllocationCounter(); // reset the counter of new/delete
+  static int_fast64_t getAllocationCount(); // count number of new/delete
 
+  static size_t getAllocatedBytes(); // get the number of bytes dynamically allocated
+};
+
+}
 extern void* operator new(size_t size);
 extern void* operator new[](size_t size);
 extern void operator delete(void* ptr) throw ();

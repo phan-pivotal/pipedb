@@ -1,7 +1,7 @@
 /*
  * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
  */
 #pragma once
 
-#include "blokrepository.h"
+#include "blockrepository.hpp"
+#include "tools.hpp"
 
 #include <leveldb/db.h>
 #include <leveldb/slice.h>
@@ -26,14 +27,12 @@
 #include <leveldb/write_batch.h>
 #include <leveldb/cache.h>
 
-namespace ibs {
+namespace pipedb {
 
 class LdbRepo: public BlockRepository {
     public:
         LdbRepo(const std::string& path) :
         BlockRepository(), 
-        hasCache(createCache), 
-        hasBloomFilter(createBloomFilter), 
         isOpen(false), 
         db(), 
         cache(), 
@@ -41,8 +40,7 @@ class LdbRepo: public BlockRepository {
         writeOptions(), 
         readOptions(), 
         options(), 
-        leveldbPath(path), 
-        isCompacting(false) {
+        leveldbPath(path) {
             options.create_if_missing = true;
             options.compression = leveldb::kSnappyCompression;
             // improve read performance using a cache
@@ -50,10 +48,11 @@ class LdbRepo: public BlockRepository {
             cache.reset(leveldb::NewLRUCache(64 << 20));
             assert(NULL != cache.get());
             options.block_cache = cache.get();
-            // Use a bloom filters to reduce the disk lookups.
+            // use a bloom filters to reduce the disk lookups.
             filter.reset(leveldb::NewBloomFilterPolicy(100));
             assert(NULL != filter.get());
             options.filter_policy = filter.get();
+	    // improve write performance using a write buffer
             options.write_buffer_size = 64 << 20;
         }
 
@@ -71,21 +70,20 @@ class LdbRepo: public BlockRepository {
             return isOpen;
         }
 
-        virtual Return close() {
-            // delete the associated leveldb instance to close
-            isOpen = false;
-            db.reset();
-            isCompacting = false;
-            return Return::OK;
-        }
-
         virtual bool closed() {
             return ! isOpen;
         }
 
-        virtual StatusCode open() {
+        virtual Return close() {
+            // delete the associated leveldb instance to close
+            isOpen = false;
+            db.reset();
+            return Return::OK;
+        }
+
+        virtual Return open() {
             if (isOpen.exchange(true) == true) {
-                return StatusCode::NotSupported();
+                return Return::NOT_SUPPORTED;
             }
             else {
                 leveldb::DB* dbToAllocate = NULL;
@@ -104,55 +102,52 @@ class LdbRepo: public BlockRepository {
                     assert(status.ok());
                     if (dbToAllocate == NULL) {
                         close();
-                        return StatusCode::NotSupported();
+                        return Return::NOT_SUPPORTED;
                     }
                     // pass the memory to the class
                     // in the smart pointer
                     db.reset(dbToAllocate);
-                    return StatusCode::OK();
+                    return Return::OK;
                 }
             }
         }
 
-        virtual void close() {
-            ;
-        }
-
-        virtual bool isClosed() {
-            return !isOpen;
-        }
-
         virtual Return put(const Key&& key, const InputBlock&& value) {
             if (isOpen) {
-                return fromStatus(db->Put(wOptions, toSlice(key), toSlice(value)));
+	      return fromStatus(db->Put(writeOptions, toSlice(std::move(key)), toSlice(std::move(value))));
             }
             else {
-                return StatusCode::NotSupported();
+                return Return::NOT_SUPPORTED;
             }
         }
 
         virtual Return get(const Key&& key, OutputBlock& value) {
             if (isOpen) {
-                return fromStatus(db->Get(rOptions, toSlice(key), value));
+	      std::string data;
+	      Return state = fromStatus(db->Get(readOptions, toSlice(std::move(key)), &data));
+	      if(state.success()) {
+		value.set_data(data);
+	      }
+	      return state;
             }
             else {
-                return StatusCode::NotSupported();
+                return Return::NOT_SUPPORTED;
             }
         }
 
         virtual Return drop(const Key&& key) {
             if (isOpen) {
-                return fromStatus(db->Delete(wOptions, toSlice(key)));
+	      return fromStatus(db->Delete(writeOptions, toSlice(std::move(key))));
             }
             else {
-                return StatusCode::NotSupported();
+                return Return::NOT_SUPPORTED;
             }
         }
 
         virtual bool included(const Key&& key) {
             if (isOpen) {
                 std::string value;
-                leveldb::Status status = db->Get(rOptions, toSlice(key), &value);
+                leveldb::Status status = db->Get(readOptions, toSlice(std::move(key)), &value);
                 return status.ok();
             }
             else {
@@ -161,31 +156,66 @@ class LdbRepo: public BlockRepository {
         }
 
         virtual bool excluded(const Key&& key) {
-            return ! included(key);
+	  return isOpen && ! included(std::move(key));
         }
 
         virtual Return erase()  {
             if (isOpen) {
-                return StatusCode::NotSupported();
+                return Return::NOT_SUPPORTED;
             }
             else {
                 leveldb::Status status;
                 status = leveldb::DestroyDB(leveldbPath, options);
-                FileTools::removeDirectory(leveldbPath);
+                Tools::remove_all(leveldbPath);
                 return fromStatus(status);
             }
         }
+    protected:
+  
+        Return fromStatus(const leveldb::Status& st) noexcept {
+	  if (st.ok()) {
+	    return Return::OK;
+	  }
+	  else if (st.IsCorruption()) {
+	    return Return::BACKEND_ERROR;
+	  }
+	  else if (st.IsIOError()) {
+	    return Return::BACKEND_ERROR;
+	  }
+	  else if (st.IsNotFound()) {
+	    return Return::KEY_NOT_PRESENT;
+	  }
+	  else {
+	    return Return::INTERNAL_ERROR;
+	  }
+	}
 
+        leveldb::Slice toSlice(const Chunk* b) noexcept {
+	  assert(b != NULL);
+	  return leveldb::Slice(b->get_data(), b->get_size());
+	}
+
+        leveldb::Slice toSlice(const Key&& b) noexcept {
+	  return leveldb::Slice(b.get_data(), b.get_size());
+	}
+
+        leveldb::Slice toSlice(const InputBlock&& b) noexcept {
+	  return leveldb::Slice(b.get_data(), b.get_size());
+	}
+
+        leveldb::Slice toSlice(const OutputBlock&& b) noexcept {
+	  return leveldb::Slice(b.get_data(), b.get_size());
+	}
+  
     private:
         std::atomic<bool> isOpen; /** If the database is open */
         std::unique_ptr<leveldb::DB> db; /** LevelDb instance. */
         std::unique_ptr<leveldb::Cache> cache; /** LevelDb read block cache */
         std::unique_ptr<const leveldb::FilterPolicy> filter; /** LevelDb filter */
-        leveldb::WriteOptions wOptions; /** Default write options. */
-        leveldb::ReadOptions rOptions; /** Default read options. */
+        leveldb::WriteOptions writeOptions; /** Default write options. */
+        leveldb::ReadOptions readOptions; /** Default read options. */
         leveldb::Options options; /** Leveldb options. Used at initialization time. */
         const std::string leveldbPath; /** file system location for the levelDB database. */
-        std::atomic<bool> isCompacting; /** If manual compaction is pending */
 };
 
 } /* namespace ibs */

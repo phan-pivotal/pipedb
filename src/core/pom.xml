@@ -35,13 +35,14 @@
               <goal>shell</goal>
             </goals>
             <configuration>
-	      <keepScriptFile>true</keepScriptFile>
+	      <keepScriptFile>false</keepScriptFile>
               <script>
 #!/bin/sh
-mkdir -p ${basedir}/target/nar/gnu/${localAOL}/src
-touch ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
-echo '#!/bin/sh' >> ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
-echo "cmake -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target -G 'Unix Makefiles'" > ${basedir}/target/nar/gnu/${localAOL}/src/autogen.sh
+srcdir=${basedir}/target/nar/gnu/${localAOL}/src
+mkdir -p $srcdir
+autogen=$srcdir/autogen.sh
+echo "Generating autogen script ..."
+echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target -DINCLUDE_DIR:PATH=${basedir}/target/nar/include -DLIBRARY_DIR:PATH=${basedir}/target/nar/lib/${localAOL}/shared -G 'Unix Makefiles'" > $autogen
               </script>
             </configuration>
           </execution>
@@ -50,13 +51,48 @@ echo "cmake -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target 
             <plugin>
               <groupId>com.github.maven-nar</groupId>
               <artifactId>nar-maven-plugin</artifactId>
-              <version>3.1.0</version>
+              <version>3.2.0</version>
               <extensions>true</extensions>
+              <configuration>
+		<layout>NarLayout20</layout>
+                <libraries>
+                  <library>
+                    <type>shared</type>
+                    <run>true</run>
+                  </library>
+                  <library>
+                    <type>static</type>
+                    <run>true</run>
+                  </library>
+                </libraries>
+                <cpp>
+                  <clearDefaultOptions>false</clearDefaultOptions>
+		  <optimize>extreme</optimize>
+                  <testOptions>
+                    <testOption>-v</testOption>
+                    <testOption>-std=c++11</testOption>
+                    <testOption>-DGTEST_USE_OWN_TR1_TUPLE</testOption>
+                  </testOptions>
+                </cpp>
+<!--                <tests>
+                  <test>
+                    <name>unit_test</name>
+                    <link>shared</link>
+                    <run>true</run>
+                  </test>
+                </tests> -->
+              </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>snappy</artifactId>
+            <version>${snappyVersion}</version>
+            <type>nar</type>
+        </dependency>
         <dependency>
             <groupId>com.google</groupId>
             <artifactId>leveldb</artifactId>
@@ -71,5 +107,4 @@ echo "cmake -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target 
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

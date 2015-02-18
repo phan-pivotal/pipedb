@@ -1,18 +1,18 @@
 #pragma once
 #include <gtest/gtest.h>
-#include "memoryChecker.h"
+#include "memoryallocationchecker.hpp"
 
 namespace pipedb_testing {
   class TestSuite: public ::testing::Test {
   protected:  
     virtual void SetUp() {
       ::testing::FLAGS_gtest_death_test_style = "threadsafe";
-      resetAllocationCounter();
+      MemoryChecker::resetAllocationCounter();
       beforeTestSuite();
     }
     
     virtual void TearDown() {
-      EXPECT_EQ(0, getAllocationCount());
+      EXPECT_EQ(0, MemoryChecker::getAllocationCount());
       afterTestSuite();
     }
     

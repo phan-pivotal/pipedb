@@ -1,7 +1,7 @@
 /*
  * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 #include <boost/utility.hpp>
 
-#include "returnstate.h"
+#include "returnstate.hpp"
 #include "key.hpp"
 #include "inputblock.hpp"
 #include "outputblock.hpp"

@@ -13,7 +13,7 @@ namespace pipedb_testing {
     auto pipe = Pipe<std::string>::create();
     pipe->push(new std::string("1"));
     
-    for (auto s : testPipe->to_weak_ptr_vector())
+    for (auto s : pipe->to_weak_ptr_vector())
       {
 	if (auto spt = s.lock())
 	  {

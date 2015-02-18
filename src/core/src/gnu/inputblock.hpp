@@ -1,7 +1,7 @@
 /*
  * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@
 
 #include <boost/utility.hpp>
 
+#include "Chunk.hpp"
+
 namespace pipedb
 {
 
 /**
  * @brief Defines the blocks for the API.
  */
-class InputBlock: private boost::noncopyable
+class InputBlock: private boost::noncopyable, public Chunk
 {
 public:
   /**
@@ -54,16 +56,24 @@ public:
    * @brief Move constructor for effective call from methods
    */
   InputBlock(const InputBlock&& d) :
-      _data(d), _size(d._size)
+      _data(d._data), _size(d._size)
   {
   }
 
   /**
    * @brief Return the number of bytes of the data referenced.
    */
-  size_t get_size() const noexcept
+  virtual size_t get_size() const noexcept
   {
     return _size;
+  }
+
+  /**
+   * @brief Return a pointer on the data referenced.
+   */
+  virtual const char* get_data() const noexcept
+  {
+    return _data;
   }
 
   /**
@@ -87,7 +97,7 @@ public:
   /**
    * @brief Equality operator
    */
-  bool operator==(const Block& k) const noexcept
+  bool operator==(const InputBlock& k) const noexcept
   {
     return ((_size == k._size)
         && (referencing(k._data) || (memcmp(_data, k._data, _size) == 0)));

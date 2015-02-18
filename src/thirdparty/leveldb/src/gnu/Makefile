@@ -90,7 +90,7 @@ $(SHARED1):
 
 endif  # PLATFORM_SHARED_EXT
 
-all: $(SHARED) 
+all: $(SHARED) $(LIBRARY)
 
 check: all $(PROGRAMS) $(TESTS)
 	for t in $(TESTS); do echo "***** Running $$t"; ./$$t || exit 1; done
@@ -218,3 +218,4 @@ endif
 install: 
 	mkdir -p $(PREFIX)/lib
 	if test -f libleveldb.dylib ; then cp -a libleveldb.dylib* $(PREFIX)/lib ; else cp -a libleveldb.so* $(PREFIX)/lib ; fi
+	cp -a libleveldb.a $(PREFIX)/lib

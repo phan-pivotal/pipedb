@@ -33,7 +33,7 @@ class ExceptionTracer {
             char** symbols = backtrace_symbols(array, nSize);
 
             for (int i = 0; i < nSize; i++) {
-	      std::cerr << symbols[i] << std::endl;
+              std::cerr << symbols[i] << std::endl;
             }
 
             free(symbols);

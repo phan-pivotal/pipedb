@@ -1,20 +1,19 @@
 #include "memoryallocationchecker.hpp"
 
-using namespace std;
+namespace pipedb_testing {
 
-static int_fast64_t allocation = 0;
+int_fast64_t MemoryChecker::allocation = 0;
+size_t MemoryChecker::allocatedBytes = 0;
 
-void resetAllocationCounter() {
+void MemoryChecker::resetAllocationCounter() {
     allocation = 0;
 }
 
-int_fast64_t getAllocationCount() {
+int_fast64_t MemoryChecker::getAllocationCount() {
     return allocation;
 }
 
-static size_t allocatedBytes = 0;
-
-extern size_t getAllocatedBytes() {
+size_t MemoryChecker::getAllocatedBytes() {
     return allocatedBytes;
 }
 
@@ -24,7 +23,7 @@ const int endBlock = 0x0F0F0F0;
 
 // global overloading of new to count number of new
 // allocated bytes and detect overflow/memory corruption
-static void* innerNew(size_t size) {
+void* MemoryChecker::innerNew(size_t size) {
     ++allocation;
     size_t totalSize = size + sizeof(int) * 3 + sizeof(size_t);
     void* p = malloc(size + sizeof(int) * 3 + sizeof(size_t));
@@ -51,16 +50,8 @@ static void* innerNew(size_t size) {
     return p;
 }
 
-void* operator new(size_t size) {
-    return innerNew(size);
-}
-
-void* operator new[](size_t size) {
-    return innerNew(size);
-}
-
 // global overloading of delete to count number of delete
-static void innerDelete(void* p) throw () {
+void MemoryChecker::innerDelete(void* p) throw () {
     // also count deletion of NULL pointer because it's an hint of potential wrong memory handling,
     // and a potential performance amelioration by removing the calls to delete of a NULL pointer ...
     --allocation;
@@ -85,12 +76,12 @@ static void innerDelete(void* p) throw () {
     }
 
     if (!hasError && (check != beginHeader)) {
-        cerr << "Wrong block header" << endl;
+        std::cerr << "Wrong block header" << std::endl;
         hasError = true;
     }
 
     if (!hasError && (*begin != beginBlock)) {
-        cerr << "Wrong block begin" << endl;
+        std::cerr << "Wrong block begin" << std::endl;
         hasError = true;
     }
 
@@ -100,13 +91,13 @@ static void innerDelete(void* p) throw () {
         int* end = (int*) ((char*) realPointer + size + sizeof(int) * 2 + sizeof(size_t));
 
         if (*end != endBlock) {
-            cerr << "Wrong block end" << endl;
+            std::cerr << "Wrong block end" << std::endl;
             hasError = true;
         }
     }
 
     if (hasError) {
-        cerr << "Detected memory corruption." << endl;
+        std::cerr << "Detected memory corruption." << std::endl;
         return;
     }
 
@@ -119,11 +110,21 @@ static void innerDelete(void* p) throw () {
     allocatedBytes -= size;
 }
 
+}
+
+void* operator new(size_t size) {
+    return pipedb_testing::MemoryChecker::innerNew(size);
+}
+
+void* operator new[](size_t size) {
+    return pipedb_testing::MemoryChecker::innerNew(size);
+}
+
 void operator delete(void *p) throw () {
-    innerDelete(p);
+  pipedb_testing::MemoryChecker::innerDelete(p);
 }
 
 void operator delete[](void *p) throw () {
-    innerDelete(p);
+  pipedb_testing::MemoryChecker::innerDelete(p);
 }
 

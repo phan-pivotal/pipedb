@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 
 #include "settings.hpp"
 #include "managedtask.hpp"

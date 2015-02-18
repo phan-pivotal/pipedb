@@ -1,7 +1,7 @@
 /*
  * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@
 
 #include <boost/utility.hpp>
 
+#include "Chunk.hpp"
+
 namespace pipedb
 {
 
 /**
  * @brief Defines the keys for the API. All keys are immutable.
  */
-class Key: private boost::noncopyable
+class Key: private boost::noncopyable, public Chunk
 {
 public:
   /**
@@ -61,9 +63,17 @@ public:
   /**
    * @brief Return the number of bytes of the data referenced.
    */
-  size_t get_size() const noexcept
+  virtual size_t get_size() const noexcept
   {
     return _size;
+  }
+
+  /**
+   * @brief Return a pointer on the data referenced.
+   */
+  virtual const char* get_data() const noexcept
+  {
+    return _data;
   }
 
   /**

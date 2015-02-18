@@ -1,7 +1,7 @@
 /*
- * Pipedb
+ * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ public:
     KEY_HERETOFORE_INCLUDED,
     KEY_NOT_PRESENT,
     BACKEND_ERROR,
-    INTERNAL_ERROR
+    INTERNAL_ERROR,
+    NOT_SUPPORTED
   };
 
   Return(const State state) :
@@ -92,6 +93,16 @@ public:
   {
     return _state == INTERNAL_ERROR;
   }
+
+  /**
+   * @brief Returns true if this indicate that an operation is not supported in PipeDB.
+   * @return A boolean as describe above.
+   */
+  bool not_supported() const
+  {
+    return _state == NOT_SUPPORTED;
+  }
+
 
 private:
   const State _state;

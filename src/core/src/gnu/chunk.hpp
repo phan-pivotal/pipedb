@@ -17,54 +17,28 @@
  */
 #pragma once
 
-#include <pthread.h>
+#include <cstddef>
+
+#include <boost/utility.hpp>
 
 namespace pipedb
 {
 
 /**
- * @brief This is a simple to use Single Write / Multiple Reader lock
+ * @brief Defines the chunk base interface for the API.
  */
-class RWLock
+class Chunk: private boost::noncopyable
 {
 public:
-  RWLock() :
-      _impl(PTHREAD_RWLOCK_INITIALIZER)
-  {
-  }
-
-  virtual ~RWLock()
-  {
-    unlock();
-  }
+  /**
+   * @brief Return the number of bytes of the data referenced.
+   */
+  virtual size_t get_size() const noexcept = 0;
 
   /**
-   * @brief Acquire the lock in read mode
+   * @brief Return a pointer on the data referenced.
    */
-  void lock_for_read()
-  {
-    pthread_rwlock_rdlock(&_impl);
-  }
-
-  /**
-   * @brief Acquire the lock in write mode
-   */
-  void lock_for_write()
-  {
-    pthread_rwlock_wrlock(&_impl);
-  }
-
-  /**
-   * @brief Release the lock
-   */
-  void unlock()
-  {
-    pthread_rwlock_unlock(&_impl);
-  }
-
-private:
-
-  pthread_rwlock_t _impl;
+  virtual const char* get_data() const noexcept = 0;
 };
 
 }

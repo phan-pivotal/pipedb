@@ -13,15 +13,15 @@ namespace pipedb_testing {
   TEST_F(testSettings, BasicAndReload) {
     auto settings = Settings::create("/tmp/toto.ini");
     settings->set_backend_type(1);
-    EXPECT_TRUE(testSettings->save());
+    EXPECT_TRUE(settings->save());
     
-    std::cerr << "CRC = " << testSettings->checksum() << std::endl;
+    std::cerr << "CRC = " << settings->checksum() << std::endl;
     settings->set_backend_type(1);
-    EXPECT_TRUE(testSettings->save());
-    std::cerr << "CRC = " << testSettings->checksum() << std::endl;
+    EXPECT_TRUE(settings->save());
+    std::cerr << "CRC = " << settings->checksum() << std::endl;
     settings->set_backend_type(2);
-    EXPECT_TRUE(testSettings->save());
-    std::cerr << "CRC = " << testSettings->checksum() << std::endl;
+    EXPECT_TRUE(settings->save());
+    std::cerr << "CRC = " << settings->checksum() << std::endl;
 
     auto reloadSettings = SettingsReloader::create("/tmp/toto.ini");
     reloadSettings->start();

@@ -1,5 +1,7 @@
-#include "exceptionTracer.h"
+#include "exceptionstacktrace.hpp"
 #include <fstream>
+
+namespace pipedb_testing {
 
 SignalTranslator<SegmentationFaultException> g_objSegmentationFaultTranslator;
 SignalTranslator<BusErrorException> g_objBusErrorTranslator;
@@ -19,4 +21,6 @@ void ExceptionHandler::Handler() {
       std::cerr << "Abort not treated in tests" << std::endl;
     }
     exit(-1);
+}
+
 }

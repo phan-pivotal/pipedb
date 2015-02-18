@@ -1,7 +1,7 @@
 /*
  * PipeDB
  * 
- * Copyright (C) 2014 Jean-Manuel CABA
+ * Copyright (C) 2014-2015 Jean-Manuel CABA
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@
 
 #include <boost/utility.hpp>
 
+#include "Chunk.hpp"
+
 namespace pipedb
 {
 
 /**
  * @brief Defines the output blocks for the API.
  */
-class OutputBlock: private boost::noncopyable
+class OutputBlock: private boost::noncopyable, public Chunk
 {
 public:
   /**
@@ -43,24 +45,40 @@ public:
    * @brief Move constructor for effective call from methods
    */
   OutputBlock(const OutputBlock&& d) :
-      _data(d)
+      _data(d._data)
   {
   }
 
   /**
    * @brief Return the number of bytes of the data referenced.
    */
-  size_t get_size() const noexcept
+  virtual size_t get_size() const noexcept
   {
     return _data.size();
   }
 
   /**
-   * @brief Return the number of bytes of the data referenced.
+   * @brief Return a pointer on the data referenced.
    */
-  void set_data(const char* a, const size_t s)
+  virtual const char* get_data() const noexcept
+  {
+    return _data.data();
+  }
+
+  /**
+   * @brief Change internal raw data.
+   */
+  void set_data(const char* d, const size_t s)
   {
     _data.assign(d, s);
+  }
+
+  /**
+   * @brief Change internal raw data.
+   */
+  void set_data(const std::string& s)
+  {
+    _data.assign(s.data(), s.size());
   }
 
   /**
@@ -78,7 +96,7 @@ public:
    */
   bool operator==(const OutputBlock& d) const noexcept
   {
-    return _data == d;
+    return _data == d._data;
   }
 
 private:
