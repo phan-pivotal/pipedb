@@ -29,7 +29,6 @@
     </properties>
 
     <modules>
-        <module>tools</module>
-        <!-- src has no pom.xml tools will generate it ... -->
+        <module>src</module>
     </modules>
 </project>

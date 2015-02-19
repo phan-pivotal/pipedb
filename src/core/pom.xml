@@ -38,11 +38,11 @@
 	      <keepScriptFile>false</keepScriptFile>
               <script>
 #!/bin/sh
-srcdir=${basedir}/target/nar/gnu/${localAOL}/src
+srcdir=${basedir}/target/nar/gnu/${nar.aol}/src
 mkdir -p $srcdir
 autogen=$srcdir/autogen.sh
 echo "Generating autogen script ..."
-echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${localAOL}/target -DINCLUDE_DIR:PATH=${basedir}/target/nar/include -DLIBRARY_DIR:PATH=${basedir}/target/nar/lib/${localAOL}/shared -G 'Unix Makefiles'" > $autogen
+echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}/target -DINCLUDE_DIR:PATH=${basedir}/target/nar/include -DLIBRARY_DIR:PATH=${basedir}/target/nar/lib/${nar.aol}/shared -G 'Unix Makefiles'" > $autogen
               </script>
             </configuration>
           </execution>

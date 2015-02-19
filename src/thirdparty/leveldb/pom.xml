@@ -25,10 +25,10 @@
       <plugin>
         <groupId>com.github.maven-nar</groupId>
         <artifactId>nar-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <extensions>true</extensions>
         <configuration>
-          <gnuMakeArgs>-j all OPT_INC=-I${basedir}/target/nar/snappy-${snappyVersion}-noarch/include PREFIX=${basedir}/target/nar/gnu/${localAOL}/target</gnuMakeArgs>
+          <gnuMakeArgs>-j all OPT_INC=-I${basedir}/target/nar/snappy-${snappyVersion}-noarch/include PREFIX=${basedir}/target/nar/gnu/${nar.aol}/target</gnuMakeArgs>
           <libraries>
             <library>
               <type>shared</type>
