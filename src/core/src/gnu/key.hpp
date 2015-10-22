@@ -22,10 +22,11 @@
 #include <string>
 #include <cassert>
 #include <atomic>
+#include <limits>
 
 #include <boost/utility.hpp>
 
-#include "Chunk.hpp"
+#include "chunk.hpp"
 
 namespace pipedb
 {
@@ -33,7 +34,7 @@ namespace pipedb
 /**
  * @brief Defines the keys for the API. All keys are immutable.
  */
-class Key: private boost::noncopyable, public Chunk
+class Key: public Chunk, private boost::noncopyable
 {
 public:
   /**

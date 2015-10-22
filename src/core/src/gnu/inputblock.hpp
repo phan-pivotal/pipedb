@@ -25,7 +25,7 @@
 
 #include <boost/utility.hpp>
 
-#include "Chunk.hpp"
+#include "chunk.hpp"
 
 namespace pipedb
 {
@@ -33,7 +33,7 @@ namespace pipedb
 /**
  * @brief Defines the blocks for the API.
  */
-class InputBlock: private boost::noncopyable, public Chunk
+class InputBlock: public Chunk, private boost::noncopyable
 {
 public:
   /**

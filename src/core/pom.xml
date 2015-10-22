@@ -62,7 +62,7 @@ echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}
                   </library>
                   <library>
                     <type>static</type>
-                    <run>true</run>
+                    <run>false</run>
                   </library>
                 </libraries>
                 <cpp>

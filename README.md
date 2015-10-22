@@ -13,6 +13,11 @@ Version
 Installation
 --------------
 
+First recover the code :
+git clone https://github.com/juanmaneo/pipedb.git
+cd pipedb
+git submodule update --init --recursive
+
 To build just do :
 
 ```sh

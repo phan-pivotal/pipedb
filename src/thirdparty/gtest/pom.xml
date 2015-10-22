@@ -25,11 +25,10 @@
       <plugin>
         <groupId>com.github.maven-nar</groupId>
         <artifactId>nar-maven-plugin</artifactId>
-	<!-- TODO: check why 3.2.0 version is broken with gtest ... -->
         <version>3.1.0</version>
         <extensions>true</extensions>
         <configuration>
-          <gnuConfigureArgs>--disable-dependency-tracking CPPFLAGS="-DGTEST_USE_OWN_TR1_TUPLE"</gnuConfigureArgs>
+          <gnuConfigureArgs>--disable-static --disable-dependency-tracking CPPFLAGS="-DGTEST_USE_OWN_TR1_TUPLE"</gnuConfigureArgs>
           <gnuMakeArgs>-j all</gnuMakeArgs>
 	  <cpp>
             <clearDefaultOptions>true</clearDefaultOptions>
@@ -44,7 +43,7 @@
             </library>
             <library>
               <type>static</type>
-              <run>true</run>
+              <run>false</run>
             </library>
           </libraries>
         </configuration>

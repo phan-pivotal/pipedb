@@ -36,7 +36,7 @@
             </library>
             <library>
               <type>static</type>
-              <run>true</run>
+              <run>false</run>
             </library>
           </libraries>
         </configuration>
