@@ -32,6 +32,8 @@ namespace pipedb
 class Settings: private boost::noncopyable
 {
 public:
+  typedef uint8_t backend_t;
+  
   static std::unique_ptr<Settings> create(const std::string& filename)
   {
     std::unique_ptr<Settings> o(new Settings(filename));
@@ -47,7 +49,7 @@ public:
 
       read_ini(_filename, pt);
 
-      _backend_type = pt.get("backend_type", 0);
+      _backend_type = static_cast<backend_t>(pt.get("backend_type", 0));
       _temporary_directory = pt.get < std::string > ("temporary_directory");
 
       for (ptree::value_type& v : pt.get_child("persistence_directories"))
@@ -150,7 +152,7 @@ private:
 
   const std::string _filename;
 
-  int8_t _backend_type;
+  backend_t _backend_type;
   std::string _temporary_directory;
   std::vector<std::string> _persistence_directories;
 };

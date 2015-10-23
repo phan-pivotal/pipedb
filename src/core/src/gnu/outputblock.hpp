@@ -33,7 +33,7 @@ namespace pipedb
 /**
  * @brief Defines the output blocks for the API.
  */
-class OutputBlock: public Chunk, private boost::noncopyable
+class OutputBlock: public Chunk
 {
 public:
   /**

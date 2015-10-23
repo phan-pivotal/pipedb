@@ -34,7 +34,7 @@ namespace pipedb
 /**
  * @brief Defines the keys for the API. All keys are immutable.
  */
-class Key: public Chunk, private boost::noncopyable
+class Key: public Chunk
 {
 public:
   /**

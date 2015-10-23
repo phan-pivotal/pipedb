@@ -6,8 +6,8 @@ ENDIF()
 FIND_PACKAGE(Boost 1.50.0)
 IF(Boost_FOUND)
   SET(Boost_USE_STATIC_LIBS OFF)
-  SET(Boost_USE_STATIC_RUNTIME OFF)
   SET(Boost_USE_MULTITHREADED ON)
+  SET(Boost_USE_STATIC_RUNTIME OFF)
   FIND_PACKAGE(Boost COMPONENTS system filesystem iostreams REQUIRED)
 
   FILE(GLOB_RECURSE HEADERS *.hpp)
@@ -16,9 +16,9 @@ IF(Boost_FOUND)
   INCLUDE_DIRECTORIES(${INCLUDE_DIR})
   LINK_DIRECTORIES(${LIBRARY_DIR})
 
-  ADD_LIBRARY(libCore SHARED core.cpp)
+  ADD_LIBRARY(pipedb-core SHARED core.cpp)
 
-  target_link_libraries(libCore ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+  target_link_libraries(pipedb-core ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 
   ADD_DEFINITIONS("-fPIC")
   ADD_DEFINITIONS("-Wall")
@@ -26,6 +26,3 @@ IF(Boost_FOUND)
 ELSEIF(NOT Boost_FOUND)
   MESSAGE(FATAL_ERROR "Unable to find correct Boost version. Did you set BOOST_ROOT?")
 ENDIF()
-
-
-

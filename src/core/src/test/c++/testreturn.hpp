@@ -17,5 +17,5 @@ namespace pipedb_testing {
     EXPECT_TRUE(exposed().success());
   }
   
-} /* namespace ibs */
+} 
 

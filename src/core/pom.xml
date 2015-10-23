@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>info.pipedb</groupId>
-        <artifactId>src</artifactId>
-        <version>0.0.1</version>
-    </parent>
-
-    <artifactId>core</artifactId>
-    <packaging>nar</packaging>
-
-    <name>Pipe DB core</name>
-
-    <properties>
-        <skipTests>true</skipTests>
-    </properties>
-
-    <build>
-        <plugins>
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>info.pipedb</groupId>
+    <artifactId>src</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  
+  <artifactId>pipedb-core</artifactId>
+  <packaging>nar</packaging>
+  
+  <name>Pipe DB core</name>
+  
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+  
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>shell-maven-plugin</artifactId>
@@ -48,63 +48,78 @@ echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}
           </execution>
         </executions>
       </plugin>
-            <plugin>
-              <groupId>com.github.maven-nar</groupId>
-              <artifactId>nar-maven-plugin</artifactId>
-              <version>3.2.0</version>
-              <extensions>true</extensions>
-              <configuration>
-		<layout>NarLayout20</layout>
-                <libraries>
-                  <library>
-                    <type>shared</type>
-                    <run>true</run>
-                  </library>
-                  <library>
-                    <type>static</type>
-                    <run>false</run>
-                  </library>
-                </libraries>
-                <cpp>
-                  <clearDefaultOptions>false</clearDefaultOptions>
-		  <optimize>extreme</optimize>
-                  <testOptions>
-                    <testOption>-v</testOption>
-                    <testOption>-std=c++11</testOption>
-                    <testOption>-DGTEST_USE_OWN_TR1_TUPLE</testOption>
-                  </testOptions>
-                </cpp>
-<!--                <tests>
-                  <test>
-                    <name>unit_test</name>
-                    <link>shared</link>
-                    <run>true</run>
-                  </test>
-                </tests> -->
-              </configuration>
-            </plugin>
-        </plugins>
+      <plugin>
+        <groupId>com.github.maven-nar</groupId>
+        <artifactId>nar-maven-plugin</artifactId>
+        <version>3.2.2</version>
+        <extensions>true</extensions>
+        <configuration>
+          <layout>NarLayout20</layout>
+	  <gnuMakeArgs>-j all</gnuMakeArgs>
+          <libraries>
+            <library>
+              <type>shared</type>
+              <run>true</run>
+            </library>
+          </libraries>
+	  <linker>
+	    <clearDefaultOptions>true</clearDefaultOptions>
+            <sysLibs>
+              <sysLib>
+                <name>pthread</name>
+              </sysLib>
+              <sysLib>
+                <name>m</name>
+              </sysLib>
+            </sysLibs>
+	    <testOptions>
+	      <testOption>-L${basedir}/target/nar/lib/${nar.aol}/shared</testOption>
+	      <testOption>-L${basedir}/target/test-nar/lib/${nar.aol}/shared</testOption>
+	      <testOption>-lgtest</testOption>
+	      <testOption>-lsnappy</testOption>
+	      <testOption>-lleveldb</testOption>
+	    </testOptions>
+          </linker>
+          <cpp>
+	    <optimize>extreme</optimize>
+            <testOptions>
+              <testOption>-std=c++11</testOption>
+              <testOption>-DGTEST_USE_OWN_TR1_TUPLE</testOption>	      
+	      <testOption>-I${basedir}/target/nar/include</testOption>
+	      <testOption>-I${basedir}/target/test-nar/include</testOption>
+            </testOptions>
+          </cpp>
+	  <tests>
+            <test>
+              <name>unit_test</name>
+              <link>shared</link>
+              <run>true</run>
+            </test>
+          </tests>
+        </configuration>
+      </plugin>
+    </plugins>
     </build>
-
+    
     <dependencies>
-        <dependency>
-            <groupId>com.google</groupId>
-            <artifactId>snappy</artifactId>
-            <version>${snappyVersion}</version>
-            <type>nar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.google</groupId>
-            <artifactId>leveldb</artifactId>
-            <version>${leveldbVersion}</version>
-            <type>nar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.google</groupId>
-            <artifactId>gtest</artifactId>
-            <version>${GgleTestVersion}</version>
-            <type>nar</type>
-            <scope>test</scope>
-        </dependency>
+      <dependency>
+        <groupId>com.google</groupId>
+        <artifactId>snappy</artifactId>
+        <version>${snappyVersion}</version>
+        <type>nar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.google</groupId>
+        <artifactId>leveldb</artifactId>
+        <version>${leveldbVersion}</version>
+        <type>nar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.google</groupId>
+        <artifactId>gtest</artifactId>
+        <version>${GgleTestVersion}</version>
+        <type>nar</type>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 </project>
