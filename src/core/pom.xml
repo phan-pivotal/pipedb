@@ -43,6 +43,15 @@ mkdir -p $srcdir
 autogen=$srcdir/autogen.sh
 echo "Generating autogen script ..."
 echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}/target -DINCLUDE_DIR:PATH=${basedir}/target/nar/include -DLIBRARY_DIR:PATH=${basedir}/target/nar/lib/${nar.aol}/shared -G 'Unix Makefiles'" > $autogen
+
+mkdir -p ${basedir}/target/test-nar/lib/${nar.aol}/shared
+cd ${basedir}/target/test-nar/lib/${nar.aol}/shared
+ln -s libsnappy.so libsnappy-${snappyVersion}.so
+ln -s libleveldb.so libleveldb-${leveldbVersion}.so
+ln -s ${basedir}/target/nar/gnu/amd64-Linux-gpp/src/libpipedb-core.so .
+ln -s libpipedb-core.so libpipedb-core-${version}.so
+ln -s libgtest.so libgtest.so.0
+exit 0
               </script>
             </configuration>
           </execution>
@@ -56,10 +65,12 @@ echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}
         <configuration>
           <layout>NarLayout20</layout>
 	  <gnuMakeArgs>-j all</gnuMakeArgs>
+	  <environmentVariables>
+	    <LD_LIBRARY_PATH>${basedir}/target/test-nar/lib/${nar.aol}/shared</LD_LIBRARY_PATH>
+	  </environmentVariables>
           <libraries>
             <library>
               <type>shared</type>
-              <run>true</run>
             </library>
           </libraries>
 	  <linker>
@@ -92,8 +103,7 @@ echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}
 	  <tests>
             <test>
               <name>unit_test</name>
-              <link>shared</link>
-              <run>true</run>
+	      <run>true</run>
             </test>
           </tests>
         </configuration>
@@ -106,13 +116,13 @@ echo "cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=${basedir}/target/nar/gnu/${nar.aol}
         <groupId>com.google</groupId>
         <artifactId>snappy</artifactId>
         <version>${snappyVersion}</version>
-        <type>nar</type>
+	<type>nar</type>
       </dependency>
       <dependency>
         <groupId>com.google</groupId>
         <artifactId>leveldb</artifactId>
         <version>${leveldbVersion}</version>
-        <type>nar</type>
+	<type>nar</type>
       </dependency>
       <dependency>
         <groupId>com.google</groupId>

@@ -27,7 +27,7 @@ namespace pipedb_testing {
 
     auto reloadSettings = SettingsReloader::create("/tmp/toto.ini");
     reloadSettings->start();
-    std::chrono::seconds waitDuration(60);
+    std::chrono::seconds waitDuration(5);
     std::this_thread::sleep_for(waitDuration);
     reloadSettings->stop();
   }
