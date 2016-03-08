@@ -123,7 +123,7 @@ private:
 
   std::atomic<bool> _started;
   std::atomic<bool> _stopping;
-  std::atomic<int8_t> _run_counter;
+  std::atomic<uint8_t> _run_counter;
 };
 
 }

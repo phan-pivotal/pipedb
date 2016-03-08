@@ -124,12 +124,12 @@ protected:
   }
 
   template<typename T>
-  static size_t to_index(const std::string& s, const size_t N)
+  static T to_index(const std::string& s, const size_t N)
   {
     assert(s.size() >= sizeof(T));
     T i = 0;
     memcpy(&i, s.data(), sizeof(T));
-    return partition<T>(i, N);
+    return (T) partition<T>(i, N);
   }
 
 public:
