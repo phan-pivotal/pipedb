@@ -51,6 +51,7 @@ ln -s libleveldb.so libleveldb-${leveldbVersion}.so
 ln -s ${basedir}/target/nar/gnu/amd64-Linux-gpp/src/libpipedb-core.so .
 ln -s libpipedb-core.so libpipedb-core-${version}.so
 ln -s libgtest.so libgtest.so.0
+ln -s libgtest.so libgtest-${GgleTestVersion}.so
 exit 0
               </script>
             </configuration>
